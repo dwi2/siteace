@@ -18,7 +18,9 @@
 	</nav>
 
 	<div class="container">
-		{{> website_form}}
+		{{#if currentUser}}
+			{{> website_form}}
+		{{/if}}
 		{{> website_list}}
 	</div>
 </body>
