@@ -112,3 +112,13 @@ if (Meteor.isServer) {
     }
   });
 }
+
+// Challenge 1: automatic info
+// fetch web content and retrieve
+// 1. content of meta[property="og:description"]
+// 2. content of meta[name="twitter:description"]
+// 3. title
+//
+// e.g.
+// <meta property="og:description" content="開發一款 APP 遠比你們想像中難得多！ - ">
+// <meta name="twitter:description" content="開發一款 APP 遠比你們想像中難得多！ - ">
