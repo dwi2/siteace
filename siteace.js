@@ -13,7 +13,7 @@ if (Meteor.isClient) {
 	// helper function that returns all available websites
 	Template.website_list.helpers({
 		websites:function(){
-			return Websites.find({});
+			return Websites.find({}, {sort: {vote: -1}});
 		}
 	});
 
@@ -28,8 +28,9 @@ if (Meteor.isClient) {
 			// (this is the data context for the template)
 			var website_id = this._id;
 			console.log("Up voting website with id "+website_id);
-			// put the code in here to add a vote to a website!
-
+      if (Meteor.user()) {
+        Websites.update({_id: website_id}, {$inc: {vote: 1}});
+      }
 			return false;// prevent the button from reloading the page
 		},
 		"click .js-downvote":function(event){
@@ -40,6 +41,9 @@ if (Meteor.isClient) {
 			console.log("Down voting website with id "+website_id);
 
 			// put the code in here to remove a vote from a website!
+      if (Meteor.user()) {
+        Websites.update({_id: website_id}, {$inc: {vote: -1}});
+      }
 
 			return false;// prevent the button from reloading the page
 		}
@@ -59,6 +63,7 @@ if (Meteor.isClient) {
           title: title || '',
           url: url,
           description: description,
+          vote: 0,
           createdOn: new Date()
         });
       }
@@ -80,25 +85,29 @@ if (Meteor.isServer) {
     		title:"Goldsmiths Computing Department",
     		url:"http://www.gold.ac.uk/computing/",
     		description:"This is where this course was developed.",
+        vote: 0,
     		createdOn:new Date()
     	});
     	 Websites.insert({
     		title:"University of London",
     		url:"http://www.londoninternational.ac.uk/courses/undergraduate/goldsmiths/bsc-creative-computing-bsc-diploma-work-entry-route",
     		description:"University of London International Programme.",
+        vote: 0,
     		createdOn:new Date()
     	});
     	 Websites.insert({
     		title:"Coursera",
     		url:"http://www.coursera.org",
     		description:"Universal access to the world’s best education.",
-    		createdOn:new Date()
+    		vote: 0,
+        createdOn:new Date()
     	});
     	Websites.insert({
     		title:"Google",
     		url:"http://www.google.com",
     		description:"Popular search engine.",
-    		createdOn:new Date()
+    		vote: 0,
+        createdOn:new Date()
     	});
     }
   });

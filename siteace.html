@@ -66,10 +66,11 @@
 	<p>
 		{{description}}
 	</p>
-	<a href="#" class="btn btn-default js-upvote">
+	<span class="badge">{{vote}}</span>
+	<a href="#" class="btn btn-default js-upvote {{#unless currentUser}}disabled{{/unless}}">
 		<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
 	</a>
-	<a href="#" class="btn btn-default js-downvote">
+	<a href="#" class="btn btn-default js-downvote {{#unless currentUser}}disabled{{/unless}}">
 		<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
 	</a>
 	<!-- you will be putting your up and down vote buttons in here! -->
