@@ -2,34 +2,50 @@
   <title>siteace</title>
 </head>
 
-<body>
+<body></body>
+
+<template name="ApplicationLayout">
+  {{> yield "navbar"}}
+  {{> yield "main"}}
+</template>
+
+
+<template name="navbar">
 	<!-- navbar  - you will be putting the login functions here -->
-	<nav class="navbar navbar-default">
+	<nav class="navbar navbar-inverse navbar-fixed-top">
 	  <div class="container-fluid">
 	    <div class="navbar-header">
-	      <a class="navbar-brand" href="#">
+	      <a class="navbar-brand" href="/">
 	        Site Ace
 	      </a>
 	    </div>
 	    <div class="navbar-left">
 		    {{> loginButtons}}
 		  </div>
+		  <div class="navbar-right">
+		  	{{#if currentUser}}
+					<a class="btn btn-primary js-toggle-website-form" href="#">
+			  		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+			  		Post a new web site
+					</a>
+				{{/if}}
+		  </div>
 	  </div>
 	</nav>
+</template>
 
+
+<template name="websites">
 	<div class="container">
 		{{#if currentUser}}
 			{{> website_form}}
 		{{/if}}
 		{{> website_list}}
 	</div>
-</body>
+</template>
 
 
 <template name="website_form">
-	<a class="btn btn-default js-toggle-website-form" href="#">
-  		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-	</a>
 	<div id="website_form" class="hidden_div">
 		<form class="js-save-website-form">
 		  <div class="form-group">
@@ -50,29 +66,38 @@
 	</div>
 </template>
 
+
 <!-- template that displays several website items -->
 <template name="website_list">
 	<ol>
 	{{#each websites}}
-	{{>website_item}}
+		{{>website_item}}
 	{{/each}}
 	</ol>
 </template>
 
+
 <!-- template that displays individual website entries -->
 <template name="website_item">
-<li>
-	<a href="{{url}}">{{title}}</a>
-	<p>
-		{{description}}
-	</p>
-	<span class="badge">{{vote}}</span>
-	<a href="#" class="btn btn-default js-upvote {{#unless currentUser}}disabled{{/unless}}">
-		<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-	</a>
-	<a href="#" class="btn btn-default js-downvote {{#unless currentUser}}disabled{{/unless}}">
-		<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
-	</a>
+<li class="website">
+	<div>
+		<a href="{{url}}">{{title}}</a>
+		<p>
+			{{description}}
+		</p>
+	</div>
+	<div>
+		<p>
+			<a href="/item/{{_id}}">{{comments}}</a>
+		</p>
+		<span class="label label-primary vote-count">{{vote}}</span>
+		<a href="#" class="btn btn-default btn-sm js-upvote {{#unless currentUser}}disabled{{/unless}}">
+			<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+		</a>
+		<a href="#" class="btn btn-default btn-sm js-downvote {{#unless currentUser}}disabled{{/unless}}">
+			<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
+		</a>
+	</div>
 	<!-- you will be putting your up and down vote buttons in here! -->
 </li>
 </template>

@@ -1,0 +1,17 @@
+/* CSS declarations go here */
+body {
+  padding-top: 6rem;
+}
+
+.hidden_div {
+	display: none;
+}
+
+li.website {
+  padding: 1rem 0;
+  border-bottom: 0.1px solid #000;
+}
+
+span.vote-count {
+  font-size: 1.4rem;
+}
