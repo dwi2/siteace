@@ -36,12 +36,35 @@ Template.website_list.helpers({
 });
 
 Template.website_item.helpers({
-  comments: function() {
+  commentNumber: function() {
     var website_id = this._id;
     var commentCount = Comments.find({website_id: website_id}).count();
     var result = commentCount > 1 ?
       commentCount + ' comments' : commentCount + ' comment';
     return result;
+  },
+  author: function() {
+    if (this.createdBy) {
+      return this.createdBy.username;
+    } else {
+      return 'system';
+    }
+  }
+});
+
+Template.comment_list.helpers({
+  comments: function() {
+    return Comments.find({website_id: this.website_id}, {sort: {createdOn: 1}});
+  },
+  hasAnyComments: function() {
+    var result = Comments.find({website_id: this.website_id}, {limit: 1});
+    return result.count() > 0;
+  }
+});
+
+Template.comment_item.helpers({
+  author: function() {
+    return this.createdBy.username;
   }
 });
 
@@ -51,7 +74,14 @@ Template.website_item.helpers({
 
 Template.navbar.events({
   "click .js-toggle-website-form":function(event){
-    $("#website_form").toggle('slow');
+    $("#website_form").toggle('slow', function(d) {
+      if (this.style.display !== 'none') {
+        // scroll to form
+        $(document).scrollTop(0);
+      } else {
+        cleanWebsiteForm();
+      }
+    });
   },
 });
 
@@ -60,7 +90,6 @@ Template.website_item.events({
 		// example of how you can access the id for the website in the database
 		// (this is the data context for the template)
 		var website_id = this._id;
-		console.log("Up voting website with id "+website_id);
     if (Meteor.user()) {
       Websites.update({_id: website_id}, {$inc: {vote: 1}});
     }
@@ -71,8 +100,6 @@ Template.website_item.events({
 		// example of how you can access the id for the website in the database
 		// (this is the data context for the template)
 		var website_id = this._id;
-		console.log("Down voting website with id "+website_id);
-
 		// put the code in here to remove a vote from a website!
     if (Meteor.user()) {
       Websites.update({_id: website_id}, {$inc: {vote: -1}});
@@ -94,16 +121,50 @@ Template.website_form.events({
         url: url,
         description: description,
         vote: 0,
+        createdBy: Meteor.user(),
         createdOn: new Date()
       });
     }
-    $("#website_form").hide();
-		return false;// stop the form submit from reloading the page
+    $("#website_form").hide(function() {
+      cleanWebsiteForm();
+    });
 
-	}
+		return false;// stop the form submit from reloading the page
+	},
+  "click .js-cancel-save-website-form": function(evt) {
+    $("#website_form").hide(function() {
+      cleanWebsiteForm();
+    });
+    return false;
+  }
+});
+
+Template.comment_form.events({
+  "submit .js-save-comment-form": function(evt) {
+    var comment = $('#comment').val();
+    var website_id = this.website_id;
+    if (Meteor.user() && comment && comment.length > 0 && website_id) {
+      Comments.insert({
+        website_id: website_id,
+        comment: comment,
+        createdBy: Meteor.user(),
+        createdOn: new Date()
+      }, function(err, id) {
+        if (id) {
+          $('#comment').val('');
+        }
+      });
+    }
+    return false;
+  }
 });
 
 
+var cleanWebsiteForm = function() {
+  $('#url').val('');
+  $('#title').val('');
+  $('#description').val('');
+}
 // Challenge 1: automatic info
 // fetch web content and retrieve
 // 1. content of meta[property="og:description"]
