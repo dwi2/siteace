@@ -15,3 +15,7 @@ li.website {
 span.vote-count {
   font-size: 1.4rem;
 }
+
+.hidden {
+  display: none;
+}

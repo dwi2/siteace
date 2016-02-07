@@ -68,21 +68,22 @@ Template.comment_item.helpers({
   }
 });
 
+Template.comment_form.onRendered(function() {
+  $('#comment-alert').addClass('hidden').text('Cannot post empty comment');
+});
+
 /////
 // template events
 /////
 
-Template.navbar.events({
+Template.websites.events({
   "click .js-toggle-website-form":function(event){
-    $("#website_form").toggle('slow', function(d) {
-      if (this.style.display !== 'none') {
-        // scroll to form
-        $(document).scrollTop(0);
-      } else {
+    $("#website_form").toggle('fast', function(d) {
+      if (this.style.display === 'none') {
         cleanWebsiteForm();
       }
     });
-  },
+  }
 });
 
 Template.website_item.events({
@@ -112,10 +113,26 @@ Template.website_item.events({
 Template.website_form.events({
 	"submit .js-save-website-form":function(event){
 		var url = event.target.url.value;
-    var title = $('#title').val();
-    var description = $('#description').val();
-    if (Meteor.user() && url && url.length > 0 &&
-        description && description.length > 0) {
+    var urlElem = $('#url');
+    var titleElem = $('#title');
+    var descriptionElem = $('#description');
+    var title = titleElem.val();
+    var description = descriptionElem.val();
+    var hasNoError = true;
+
+    urlElem.parent().removeClass('has-error');
+    descriptionElem.parent().removeClass('has-error');
+
+    if (!url || url.length === 0) {
+      urlElem.parent().addClass('has-error');
+      hasNoError = false;
+    }
+    if (!description || description.length === 0) {
+      descriptionElem.parent().addClass('has-error');
+      hasNoError = false;
+    }
+
+    if (Meteor.user() && hasNoError) {
       Websites.insert({
         title: title || '',
         url: url,
@@ -124,10 +141,10 @@ Template.website_form.events({
         createdBy: Meteor.user(),
         createdOn: new Date()
       });
+      $("#website_form").hide(function() {
+        cleanWebsiteForm();
+      });
     }
-    $("#website_form").hide(function() {
-      cleanWebsiteForm();
-    });
 
 		return false;// stop the form submit from reloading the page
 	},
@@ -143,17 +160,24 @@ Template.comment_form.events({
   "submit .js-save-comment-form": function(evt) {
     var comment = $('#comment').val();
     var website_id = this.website_id;
-    if (Meteor.user() && comment && comment.length > 0 && website_id) {
-      Comments.insert({
-        website_id: website_id,
-        comment: comment,
-        createdBy: Meteor.user(),
-        createdOn: new Date()
-      }, function(err, id) {
-        if (id) {
-          $('#comment').val('');
-        }
-      });
+    if (Meteor.user() && website_id) {
+      if (comment && comment.length > 0) {
+        Comments.insert({
+          website_id: website_id,
+          comment: comment,
+          createdBy: Meteor.user(),
+          createdOn: new Date()
+        }, function(err, id) {
+          if (id) {
+            $('#comment-alert').addClass('hidden').text('Cannot post empty comment');
+            $('#comment').val('');
+          } else {
+            $('#comment-alert').removeClass('hidden').text(err);
+          }
+        });
+      } else {
+        $('#comment-alert').removeClass('hidden').text('Cannot post empty comment');
+      }
     }
     return false;
   }
@@ -161,9 +185,9 @@ Template.comment_form.events({
 
 
 var cleanWebsiteForm = function() {
-  $('#url').val('');
-  $('#title').val('');
-  $('#description').val('');
+  $('#url').val('').parent().removeClass('has-error');
+  $('#title').val('').parent().removeClass('has-error');
+  $('#description').val('').parent().removeClass('has-error');
 }
 // Challenge 1: automatic info
 // fetch web content and retrieve
