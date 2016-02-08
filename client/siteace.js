@@ -111,6 +111,26 @@ Template.website_item.events({
 })
 
 Template.website_form.events({
+  'change input#url': function(evt) {
+    var urlElem = $('#url');
+    var url = urlElem.val();
+    var titleElem = $('#title');
+    var descriptionElem = $('#description');
+    var percentageElem = $('#progress-percentage');
+    urlElem.parent().removeClass('has-error');
+    percentageElem.removeClass('progress-bar-danger').width('50%');
+    Meteor.call('getMeta', url, function(error, meta) {
+      percentageElem.width('100%');
+      if (!error) {
+        titleElem.val(meta.ogTitle || meta.title);
+        meta.ogDescription && descriptionElem.val(meta.ogDescription);
+      } else {
+        urlElem.parent().addClass('has-error');
+        percentageElem.addClass('progress-bar-danger');
+        console.log(error);
+      }
+    });
+  },
 	"submit .js-save-website-form":function(event){
 		var url = event.target.url.value;
     var urlObject = Iron.Url.parse(event.target.url.value);
@@ -124,7 +144,6 @@ Template.website_form.events({
     urlElem.parent().removeClass('has-error');
     descriptionElem.parent().removeClass('has-error');
 
-    console.log(urlObject);
     if (!urlObject || !urlObject.host || !urlObject.rootUrl) {
       urlElem.parent().addClass('has-error');
       hasNoError = false;
@@ -134,15 +153,18 @@ Template.website_form.events({
       hasNoError = false;
     }
 
+    var isWebsiteAlreadySaved = !!Websites.findOne({url: url});
     if (Meteor.user() && hasNoError) {
-      Websites.insert({
-        title: title || '',
-        url: url,
-        description: description,
-        vote: 0,
-        createdBy: Meteor.user(),
-        createdOn: new Date()
-      });
+      if (!isWebsiteAlreadySaved) {
+        Websites.insert({
+          title: title || '',
+          url: url,
+          description: description,
+          vote: 0,
+          createdBy: Meteor.user(),
+          createdOn: new Date()
+        });
+      }
       $("#website_form").hide(function() {
         cleanWebsiteForm();
       });
@@ -190,13 +212,5 @@ var cleanWebsiteForm = function() {
   $('#url').val('').parent().removeClass('has-error');
   $('#title').val('').parent().removeClass('has-error');
   $('#description').val('').parent().removeClass('has-error');
+  $('#progress-percentage').width('0%');
 }
-// Challenge 1: automatic info
-// fetch web content and retrieve
-// 1. content of meta[property="og:description"]
-// 2. content of meta[name="twitter:description"]
-// 3. title
-//
-// e.g.
-// <meta property="og:description" content="開發一款 APP 遠比你們想像中難得多！ - ">
-// <meta name="twitter:description" content="開發一款 APP 遠比你們想像中難得多！ - ">

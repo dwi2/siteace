@@ -24,3 +24,13 @@ span.vote-count {
   height: 50px;
   line-height: 50px;
 }
+
+.js-save-website-form .progress {
+  height: 3px;
+  width: 100%;
+}
+
+#progress-percentage {
+  height: 3px;
+  width: 0%;
+}

@@ -25,3 +25,4 @@ http
 iron:router
 iron:url
 force-ssl
+takashi:metainspector
