@@ -72,6 +72,12 @@ Template.website_item.helpers({
     } else {
       return 'system';
     }
+  },
+  fromNow: function() {
+    return moment(this.createdOn).fromNow();
+  },
+  isAuthor: function() {
+    return (Meteor.user() && this.createdBy && Meteor.user()._id === this.createdBy._id);
   }
 });
 
@@ -88,6 +94,9 @@ Template.comment_list.helpers({
 Template.comment_item.helpers({
   author: function() {
     return this.createdBy.username;
+  },
+  fromNow: function() {
+    return moment(this.createdOn).fromNow();
   }
 });
 
@@ -122,6 +131,14 @@ Template.websites.events({
 });
 
 Template.website_item.events({
+  'click .js-delete-website': function(evt) {
+    var id = evt.target.dataset.id;
+    console.log(id);
+    var website = Websites.findOne({_id: id});
+    if(window.confirm('Are you sure to delete ' + website.url + '?')) {
+      Websites.remove({_id: id});
+    }
+  },
 	"click .js-upvote":function(event){
 		// example of how you can access the id for the website in the database
 		// (this is the data context for the template)

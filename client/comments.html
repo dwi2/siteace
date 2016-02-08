@@ -9,9 +9,9 @@
         {{description}}
       </p>
     </div>
-
-    {{> comment_form website_id=_id}}
-
+    {{#if currentUser}}
+      {{> comment_form website_id=_id}}
+    {{/if}}
     {{> comment_list website_id=_id}}
 
     <div>
@@ -33,7 +33,7 @@
 
 <template name="comment_item">
   <div>
-    <span><em>{{author}} says</em></span>
+    <span><em>{{author}}</em> says {{fromNow}}</span>
     <blockquote>{{comment}}</blockquote>
   </div>
 </template>

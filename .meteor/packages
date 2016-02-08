@@ -26,3 +26,4 @@ iron:router
 iron:url
 force-ssl
 takashi:metainspector
+momentjs:moment
