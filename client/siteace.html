@@ -81,23 +81,37 @@
 <template name="website_item">
 <li class="website">
 	<div>
-		<a href="{{url}}">{{title}}</a>
+		<ul class="list-inline">
+			<li>
+				<a href="/item/{{_id}}">{{title}}</a>
+			</li>
+			<li>
+			<a href="{{url}}" target="_blank" class="btn btn-xs btn-default">Go to url <span class="glyphicon glyphicon-link"></span></a>
+			</li>
+		</ul>
 		<p>
 			{{description}}
 		</p>
 	</div>
 	<div>
-		<p>
-			by {{author}} | <a href="/item/{{_id}}">{{commentNumber}}</a>
-		</p>
-		<span class="label label-primary vote-count">{{vote}}</span>
-		<a href="#" class="btn btn-default btn-sm js-upvote {{#unless currentUser}}disabled{{/unless}}">
-			<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
-		</a>
-		<a href="#" class="btn btn-default btn-sm js-downvote {{#unless currentUser}}disabled{{/unless}}">
-			<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span>
-		</a>
+		<ul class="list-inline">
+			<li>
+				by {{author}}
+			</li>
+			<li>
+			 <a href="/item/{{_id}}">{{commentNumber}}</a>
+			</li>
+		</ul>
 	</div>
-	<!-- you will be putting your up and down vote buttons in here! -->
+	<div>
+		<ul class="list-inline">
+			<li><span class="label label-primary vote-count">{{vote}}</span>
+			</li>
+			<li><a href="#" class="btn btn-default btn-sm js-upvote {{#unless currentUser}}disabled{{/unless}}">
+			<span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></a></li>
+			<li><a href="#" class="btn btn-default btn-sm js-downvote {{#unless currentUser}}disabled{{/unless}}">
+			<span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></a></li>
+		</ul>
+	</div>
 </li>
 </template>
