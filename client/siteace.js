@@ -31,7 +31,30 @@ Router.route('/item/:_id', function () {
 // helper function that returns all available websites
 Template.website_list.helpers({
 	websites: function() {
-		return Websites.find({}, {sort: {vote: -1}});
+    var keyword = Session.get('keyword');
+    if (keyword) {
+      keyword = keyword.trim();
+    }
+
+    if (keyword && keyword.length > 0) {
+      var lowerKeyword = keyword.toLowerCase();
+      var searchCondition = function() {
+        return this.url.toLowerCase().indexOf(keyword) > -1 ||
+          this.description.toLowerCase().indexOf(keyword) > -1 ||
+          this.title.toLowerCase().indexOf(keyword) > -1;
+      };
+
+      return Websites.find(
+        {
+          $where: searchCondition
+        },
+        {
+          sort: {vote: -1}
+        }
+      );
+    } else {
+      return Websites.find({}, {sort: {vote: -1}});
+    }
 	}
 });
 
@@ -83,6 +106,18 @@ Template.websites.events({
         cleanWebsiteForm();
       }
     });
+  },
+  'input #search': function(evt) {
+    var keyword = evt.target.value;
+    var keywordLength = keyword.trim().length;
+    if (keywordLength === 0) {
+      setKeyword('');
+    } else if (keywordLength > 3) {
+      setKeyword(keyword);
+    }
+  },
+  'change #search': function(evt) {
+    setKeyword(evt.target.value);
   }
 });
 
@@ -122,12 +157,12 @@ Template.website_form.events({
     Meteor.call('getMeta', url, function(error, meta) {
       percentageElem.width('100%');
       if (!error) {
-        titleElem.val(meta.ogTitle || meta.title);
-        meta.ogDescription && descriptionElem.val(meta.ogDescription);
+        titleElem.val(meta.ogTitle || meta.title || titleElem.val());
+        descriptionElem.val(meta.ogDescription || meta.description || descriptionElem.val());
       } else {
         urlElem.parent().addClass('has-error');
         percentageElem.addClass('progress-bar-danger');
-        console.log(error);
+        console.warn(error);
       }
     });
   },
@@ -213,4 +248,10 @@ var cleanWebsiteForm = function() {
   $('#title').val('').parent().removeClass('has-error');
   $('#description').val('').parent().removeClass('has-error');
   $('#progress-percentage').width('0%');
-}
+};
+
+var setKeyword = function(keyword) {
+  Session.set('keyword', keyword);
+};
+
+

@@ -29,14 +29,29 @@
 
 <template name="websites">
 	<div class="container">
-		{{#if currentUser}}
-			<a class="btn btn-primary js-toggle-website-form" href="#">
-	  		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-	  		Post a new web site
-			</a>
-			{{> website_form}}
-		{{/if}}
-		{{> website_list}}
+		<div class="row">
+			<div class="col-md-2 col-md-offset-1">
+				<div class="form-inline">
+					<div class="form-group">
+						<input type="text" id="search" placeholder="Search" class="form-control"/>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-9">
+			{{#if currentUser}}
+				<a class="btn btn-primary js-toggle-website-form" href="#">
+		  		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+		  		Post a new web site
+				</a>
+				{{> website_form}}
+			{{/if}}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				{{> website_list}}
+			</div>
+		</div>
 	</div>
 </template>
 
