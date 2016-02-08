@@ -113,6 +113,7 @@ Template.website_item.events({
 Template.website_form.events({
 	"submit .js-save-website-form":function(event){
 		var url = event.target.url.value;
+    var urlObject = Iron.Url.parse(event.target.url.value);
     var urlElem = $('#url');
     var titleElem = $('#title');
     var descriptionElem = $('#description');
@@ -123,7 +124,8 @@ Template.website_form.events({
     urlElem.parent().removeClass('has-error');
     descriptionElem.parent().removeClass('has-error');
 
-    if (!url || url.length === 0) {
+    console.log(urlObject);
+    if (!urlObject || !urlObject.host || !urlObject.rootUrl) {
       urlElem.parent().addClass('has-error');
       hasNoError = false;
     }
