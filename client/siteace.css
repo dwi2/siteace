@@ -19,3 +19,8 @@ span.vote-count {
 .hidden {
   display: none;
 }
+
+.login-buttons {
+  height: 50px;
+  line-height: 50px;
+}
